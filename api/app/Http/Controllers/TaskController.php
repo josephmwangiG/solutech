@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\UserTask;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -13,9 +14,10 @@ class TaskController extends Controller
     public function index()
     {
 
-        $tasks = Task::latest()->paginate(10);
+        $tasks = Task::latest()->with("status", "users")->paginate(10);
+        $all_tasks = Task::latest()->with("status", "users")->get();
 
-        return response(["tasks" => $tasks], 200);
+        return response(["tasks" => $tasks, "all_tasks" => $all_tasks], 200);
     }
 
     /**
@@ -38,8 +40,23 @@ class TaskController extends Controller
             "due_date" => "required",
         ]);
 
-        Task::create($data);
-        $tasks = Task::latest()->paginate(10);
+        $task = Task::create($data);
+
+        if ($request->has("task_users")) {
+            foreach ($request->get("task_users") as $user) {
+                UserTask::create([
+                    "user_id" => $user,
+                    "task_id" => $task->id,
+                    "start_time" => date("H:i"),
+                    "end_time" => date("H:i"),
+                    "due_date" => date("Y-m-d"),
+                    "status_id" => $data["status_id"],
+                ]);
+            }
+        }
+
+
+        $tasks = Task::latest()->with("status", "users")->paginate(10);
 
         return response(["tasks" => $tasks, "message" => "New task created."], 200);
     }
@@ -65,7 +82,33 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
 
-        return $request->all();
+        $data = $request->validate([
+            "name" => "required",
+            "description" => "required",
+            "status_id" => "required",
+            "due_date" => "required",
+        ]);
+
+        $task->update($data);
+
+        UserTask::destroy($task->users);
+
+        if ($request->has("task_users")) {
+            foreach ($request->get("task_users") as $user) {
+                UserTask::create([
+                    "user_id" => $user,
+                    "task_id" => $task->id,
+                    "start_time" => date("H:i"),
+                    "end_time" => date("H:i"),
+                    "due_date" => date("Y-m-d"),
+                    "status_id" => $data["status_id"],
+                ]);
+            }
+        }
+
+        $tasks = Task::latest()->with("status", "users")->paginate(10);
+
+        return response(["tasks" => $tasks, "message" => "Task updated."], 200);
     }
 
     /**
@@ -74,7 +117,8 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        $tasks = Task::latest()->paginate(10);
+        UserTask::destroy($task->users);
+        $tasks = Task::latest()->with("status", "users")->paginate(10);
 
         return response(["tasks" => $tasks, "message" => "Task deleted."], 200);
     }

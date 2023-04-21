@@ -5,6 +5,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserTaskController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('/users', UsersController::class);
     Route::resource('/tasks', TaskController::class);
     Route::resource('/status', StatusController::class);
-    Route::resource('/user-tasks', UserTaskController::class);
+    Route::resource('/users-tasks', UserTaskController::class);
     Route::post('/sign-out', [AuthenticationController::class, 'logout']);
 });
+
+Route::get('users-pdf', [ReportsController::class, 'usersPDF']);
+Route::get('tasks-pdf', [ReportsController::class, 'tasksPDF']);

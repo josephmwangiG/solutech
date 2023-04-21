@@ -3,13 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MLMLAB - Plans</title>
+    <title>SOLUTECK - TASK</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://script.viserlab.com/mlmlab/assets/global/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
     <link
-      type="image/png"
-      href="https://script.viserlab.com/mlmlab/assets/images/logoIcon/favicon.png"
-      rel="shortcut icon"
+      href="https://script.viserlab.com/mlmlab/assets/global/css/all.min.css"
+      rel="stylesheet"
     />
+
+    <link
+      href="https://script.viserlab.com/mlmlab/assets/global/css/line-awesome.min.css"
+      rel="stylesheet"
+    />
+
+    <link href="/css/basic/css/animate.css" rel="stylesheet" />
+    <link href="/css/basic/css/nice-select.css" rel="stylesheet" />
+    <link href="/css/basic/css/swiper.min.css" rel="stylesheet" />
+    <link href="/css/basic/css/magnific-popup.css" rel="stylesheet" />
+    <link href="/css/basic/css/odometer.css" rel="stylesheet" />
+    <link href="/css/basic/css/main.css?v2" rel="stylesheet" />
+    <link href="/css/basic/css/custom.css" rel="stylesheet" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -21,6 +40,19 @@
 
     <link href="/css/vendor/select2.min.css" rel="stylesheet" />
     <link href="/css/app.css" rel="stylesheet" />
+    <style>
+      input {
+        padding-left: 3px !important;
+      }
+      input:focus {
+        box-shadow: none !important;
+      }
+
+      el-label {
+        color: rgb(53, 52, 52) !important;
+        margin: 6px 0 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
@@ -33,86 +65,9 @@
 
     <link rel="stylesheet" href="/css/iziToast.min.css" />
     <script src="/js/iziToast.min.js"></script>
-
-    <script>
-      "use strict";
-      function notify(status, message) {
-        iziToast[status]({
-          message: message,
-          position: "topRight",
-        });
-      }
-    </script>
-
     <script src="/js/nicEdit.js"></script>
 
     <script src="/js/vendor/select2.min.js"></script>
     <script src="/js/app.js"></script>
-
-    <script>
-      "use strict";
-      bkLib.onDomLoaded(function () {
-        $(".nicEdit").each(function (index) {
-          $(this).attr("id", "nicEditor" + index);
-          new nicEditor({
-            fullPanel: true,
-          }).panelInstance("nicEditor" + index, {
-            hasPanel: true,
-          });
-        });
-      });
-      (function ($) {
-        $(document).on(
-          "mouseover ",
-          ".nicEdit-main,.nicEdit-panelContain",
-          function () {
-            $(".nicEdit-main").focus();
-          }
-        );
-      })(jQuery);
-    </script>
-
-    <script>
-      (function ($) {
-        "use strict";
-        $(document).on("click", ".confirmationBtn", function () {
-          var modal = $("#confirmationModal");
-          let data = $(this).data();
-          modal.find(".question").text(`${data.question}`);
-          modal.find("form").attr("action", `${data.action}`);
-          modal.modal("show");
-        });
-      })(jQuery);
-    </script>
-    <script>
-      "use strict";
-      (function ($) {
-        $(".edit").on("click", function () {
-          var modal = $("#edit-plan");
-          modal.find(".name").val($(this).data("name"));
-          modal.find(".price").val($(this).data("price"));
-          modal.find(".bv").val($(this).data("bv"));
-          modal.find(".ref_com").val($(this).data("ref_com"));
-          modal.find(".tree_com").val($(this).data("tree_com"));
-          modal.find("input[name=id]").val($(this).data("id"));
-          modal.modal("show");
-        });
-
-        $(".add-plan").on("click", function () {
-          var modal = $("#add-plan");
-          modal.modal("show");
-        });
-      })(jQuery);
-    </script>
-    <script>
-      if ($("li").hasClass("active")) {
-        $("#sidebar__menuWrapper").animate(
-          {
-            scrollTop: eval($(".active").offset().top - 320),
-          },
-          500
-        );
-      }
-    </script>
   </body>
 </html>

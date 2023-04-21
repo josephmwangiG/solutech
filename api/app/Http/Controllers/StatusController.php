@@ -13,8 +13,9 @@ class StatusController extends Controller
     public function index()
     {
         $status = Status::latest()->paginate(10);
+        $all_status = Status::latest()->get();
 
-        return response(["status" => $status], 200);
+        return response(["status" => $status, "all_status" => $all_status], 200);
     }
 
     /**

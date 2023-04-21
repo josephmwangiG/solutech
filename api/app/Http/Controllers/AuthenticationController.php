@@ -16,7 +16,7 @@ class AuthenticationController extends Controller
         ]);
 
         if (!Auth::attempt($attr)) {
-            return $this->error('Credentials not match', 401);
+            return response('Credentials not match', 401);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
@@ -25,7 +25,7 @@ class AuthenticationController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-        ]);
+        ], 200);
     }
 
 

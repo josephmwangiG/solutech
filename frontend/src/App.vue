@@ -1,7 +1,6 @@
 <script setup>
-import Main from './components/Main.vue'
 </script>
 
 <template>
-  <Main />
+  <router-view></router-view>
 </template>

@@ -12,9 +12,10 @@ class UserTaskController extends Controller
      */
     public function index()
     {
-        $userTasks = UserTask::latest()->paginate(10);
+        $users_tasks = UserTask::latest()->with("status", "user", "task")->paginate(10);
+        $all_users_tasks = UserTask::latest()->with("status", "user", "task")->get();
 
-        return response(["userTasks" => $userTasks], 200);
+        return response(["all_users_tasks" => $all_users_tasks, "users_tasks" => $users_tasks], 200);
     }
 
     /**
@@ -66,19 +67,37 @@ class UserTaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UserTask $userTask)
+    public function update(Request $request, $id)
     {
-        //
+
+        $data = $request->validate([
+            "status_id" => "required",
+            "due_date" => "required",
+        ]);
+
+        $userTask = UserTask::find($id);
+
+
+        $userTask->due_date = $data['due_date'];
+        $userTask->status_id = $data['status_id'];
+        $userTask->save();
+
+        $users_tasks = UserTask::latest()->with("status", "user", "task")->paginate(10);
+
+        return response(["users_tasks" => $users_tasks, "message" => "Task Updated."], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserTask $userTask)
+    public function destroy($id)
     {
-        $userTask->delete();
-        $userTasks = userTask::latest()->paginate(10);
 
-        return response(["userTasks" => $userTasks, "message" => "User task deleted."], 200);
+        $userTask = UserTask::find($id);
+        $userTask->delete();
+
+        $users_tasks = UserTask::latest()->with("status", "user", "task")->paginate(10);
+
+        return response(["users_tasks" => $users_tasks, "message" => "Task Deleted."], 200);
     }
 }

@@ -4,38 +4,67 @@
       <button @click="open = false" class="res-sidebar-close-btn">
         <i class="las la-times"></i>
       </button>
-      <div class="sidebar__inner">
-        <div class="sidebar__logo">
+      <div class="sidebar__inner pt-3">
+        <div class="sidebar__logo my-0 py-0 text-left">
           <router-link to="/" class="sidebar__main-logo"
-            ><img height="50px" src="/logo.png" alt="image"
+            ><img
+              style="height: 50px, text-align:left"
+              src="/logo.png"
+              alt="image"
           /></router-link>
         </div>
 
-        <div class="sidebar__menu-wrapper" id="sidebar__menuWrapper">
-          <ul class="sidebar__menu">
-            <li class="sidebar-menu-item">
+        <div class="sidebar__menu-wrapper mt-0" id="sidebar__menuWrapper">
+          <ul class="sidebar__menu mt-0">
+            <li
+              class="sidebar-menu-item"
+              :class="
+                currentUrl == 'home' || currentUrl == 'dashboard'
+                  ? 'active'
+                  : ''
+              "
+            >
               <router-link to="/" class="nav-link">
                 <i class="menu-icon las la-home"></i>
                 <span class="menu-title">Dashboard</span>
               </router-link>
             </li>
 
-            <li class="sidebar-menu-item active">
+            <li
+              class="sidebar-menu-item"
+              :class="currentUrl == 'users' ? 'active' : ''"
+            >
               <router-link :to="{ name: 'users' }" class="nav-link">
                 <i class="menu-icon las la-user-check"></i>
                 <span class="menu-title">Users</span>
               </router-link>
             </li>
 
-            <li class="sidebar-menu-item">
-              <router-link :to="{ name: 'users' }" class="nav-link">
+            <li
+              class="sidebar-menu-item"
+              :class="currentUrl == 'tasks' ? 'active' : ''"
+            >
+              <router-link :to="{ name: 'tasks' }" class="nav-link">
                 <i class="menu-icon las la-paper-plane"></i>
                 <span class="menu-title">Tasks</span>
               </router-link>
             </li>
 
-            <li class="sidebar-menu-item">
-              <router-link :to="{ name: 'users' }" class="nav-link">
+            <li
+              class="sidebar-menu-item"
+              :class="currentUrl == 'users-tasks' ? 'active' : ''"
+            >
+              <router-link :to="{ name: 'users-tasks' }" class="nav-link">
+                <i class="menu-icon las la-user-check"></i>
+                <span class="menu-title">Users Tasks</span>
+              </router-link>
+            </li>
+
+            <li
+              class="sidebar-menu-item"
+              :class="currentUrl == 'status' ? 'active' : ''"
+            >
+              <router-link :to="{ name: 'status' }" class="nav-link">
                 <i class="menu-icon las la-life-ring"></i>
                 <span class="menu-title">Task Status</span>
               </router-link>
@@ -45,29 +74,31 @@
               <a href="javascript:void(0)" class="">
                 <i class="menu-icon la la-list"></i>
                 <span class="menu-title">Reports</span>
-
-                <span class="menu-badge pill bg--danger ms-auto">
-                  <i class="fa fa-exclamation"></i>
-                </span>
               </a>
               <div class="sidebar-submenu sidebar-submenu__open">
                 <ul>
-                  <li class="sidebar-menu-item">
+                  <li
+                    class="sidebar-menu-item"
+                    :class="currentUrl == 'users-reports' ? 'active' : ''"
+                  >
                     <router-link
-                      to="https://script.viserlab.com/mlmlab/admin/users/active"
+                      :to="{ name: 'users-reports' }"
                       class="nav-link"
                     >
                       <i class="menu-icon las la-dot-circle"></i>
-                      <span class="menu-title">Users</span>
+                      <span class="menu-title">Users Reports</span>
                     </router-link>
                   </li>
-                  <li class="sidebar-menu-item">
+                  <li
+                    class="sidebar-menu-item"
+                    :class="currentUrl == 'tasks-reports' ? 'active' : ''"
+                  >
                     <router-link
-                      to="https://script.viserlab.com/mlmlab/admin/users/banned"
+                      :to="{ name: 'tasks-reports' }"
                       class="nav-link"
                     >
                       <i class="menu-icon las la-dot-circle"></i>
-                      <span class="menu-title">Tasks</span>
+                      <span class="menu-title">Tasks Reports</span>
                     </router-link>
                   </li>
                 </ul>
@@ -99,7 +130,6 @@
             autocomplete="off"
             placeholder="Search here..."
           />
-          <i class="las la-search"></i>
           <ul class="search-list"></ul>
         </form>
       </div>
@@ -160,11 +190,9 @@
               aria-expanded="false"
             >
               <span class="navbar-user">
-                <span class="navbar-user__thumb"
-                  ><img
-                    src="https://script.viserlab.com/mlmlab/assets/admin/images/profile/6379b33c94bd11668920124.jpg"
-                    alt="image"
-                /></span>
+                <span class="navbar-user__thumb">
+                  <img src="/profile.jpg" alt="image" />
+                </span>
                 <span class="navbar-user__info">
                   <span class="navbar-user__name">admin</span>
                 </span>
@@ -183,7 +211,6 @@
                 <i class="dropdown-menu__icon las la-user-circle"></i>
                 <span class="dropdown-menu__caption">Profile</span>
               </a>
-
               <a
                 href="#"
                 class="dropdown-menu__item d-flex align-items-center px-3 py-2"
@@ -193,7 +220,8 @@
               </a>
 
               <a
-                href="#"
+                href="javascript:void(0)"
+                @click="logout"
                 class="dropdown-menu__item d-flex align-items-center px-3 py-2"
               >
                 <i class="dropdown-menu__icon las la-sign-out-alt"></i>
@@ -207,8 +235,20 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 let open = ref(null);
+
+const currentUrl = computed(() => {
+  return router.currentRoute.value.name;
+});
+
+const logout = () => {
+  localStorage.clear();
+  router.push("/login");
+};
 </script>
 <style lang="">
 </style>

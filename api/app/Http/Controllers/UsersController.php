@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,8 +14,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::latest()->paginate(10);
-        return response(["users" => $users], 200);
+        $users = User::latest()->with("tasks")->paginate(10);
+        $all_users = User::latest()->with("tasks")->get();
+        return response(["users" => $users, "all_users" => $all_users], 200);
     }
 
     /**
@@ -31,12 +33,12 @@ class UsersController extends Controller
     {
         $data = $request->validate([
             "name" => "required",
-            "email" => "required",
+            "email" => "required|unique:users",
         ]);
         $data["password"] = Hash::make("passsword");
 
         User::create($data);
-        $users = User::latest()->paginate(10);
+        $users = User::latest()->with("tasks")->paginate(10);
 
         return response(["users" => $users, "message" => "A new user was created."], 200);
     }
@@ -62,13 +64,12 @@ class UsersController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            "name" => "",
-            "email" => "",
+            "name" => "required",
+            "email" => "required",
         ]);
 
-
         $user->update($data);
-        $users = User::latest()->paginate(10);
+        $users = User::latest()->with("tasks", "UserTask.Task")->paginate(10);
 
         return response(["users" => $users, "message" => "User details were updated."], 200);
     }
@@ -79,7 +80,9 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        $users = User::latest()->paginate(10);
+
+        UserTask::destroy($user->tasks);
+        $users = User::latest()->with("tasks")->paginate(10);
 
         return response(["users" => $users, "message" => "User details were deleted."], 200);
     }

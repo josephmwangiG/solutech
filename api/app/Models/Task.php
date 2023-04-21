@@ -10,4 +10,14 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = ["name", "description", "due_date", "status_id"];
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, "status_id");
+    }
+
+    public function users()
+    {
+        return $this->hasMany(UserTask::class, "task_id");
+    }
 }
